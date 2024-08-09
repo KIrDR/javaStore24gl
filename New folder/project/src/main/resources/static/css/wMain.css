@@ -1,0 +1,37 @@
+ body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            gap: 20px;
+        }
+        .button {
+            display: block;
+            width: 150px;
+            height: 150px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            text-align: center;
+            line-height: 150px;
+            text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .button img {
+            vertical-align: middle;
+            margin-bottom: 10px;
+        }
+
+        .button svg {
+            fill: #007bff; /* Пример применения стиля */
+            width: 40px;
+            height: 40px;
+        }

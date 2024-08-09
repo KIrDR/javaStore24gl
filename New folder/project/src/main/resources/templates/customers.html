@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Customer List</title>
+</head>
+<body>
+<h1>Customer List</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Customer Number</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Company</th>
+        <th>Address 1</th>
+        <th>Address 2</th>
+        <th>City</th>
+        <th>State</th>
+        <th>Zipcode</th>
+        <th>Phone</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr th:each="customer : ${customers}">
+        <td th:text="${customer.customerNum}"></td>
+        <td th:text="${customer.fname}"></td>
+        <td th:text="${customer.lname}"></td>
+        <td th:text="${customer.company}"></td>
+        <td th:text="${customer.address1}"></td>
+        <td th:text="${customer.address2}"></td>
+        <td th:text="${customer.city}"></td>
+        <td th:text="${customer.state}"></td>
+        <td th:text="${customer.zipcode}"></td>
+        <td th:text="${customer.phone}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
