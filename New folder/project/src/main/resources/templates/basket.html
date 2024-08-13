@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Customers</title>
+    <link rel="stylesheet" href="/css/menu.css">
+</head>
+<body>
+<h1>Customers Page</h1>
+
+<div class="dropdown">
+    <button class="menu-btn">Menu</button>
+    <div class="dropdown-content">
+        <ul>
+            <li th:if="${wMain}"><a href="/wMain">wMain</a></li>
+            <li th:if="${customers}"><a href="/customers">Customers</a></li>
+            <li th:if="${customer != null}"><a href="/customer">Customer</a></li>
+            <li th:if="${orders}"><a href="/orders">Orders</a></li>
+            <li th:if="${items}"><a href="/items">Items</a></li>
+            <li th:if="${stock}"><a href="/stock">Stock</a></li>
+            <li th:if="${basket}"><a href="/basket">Basket</a></li>
+            <li th:if="${orderId != null}"><a href="/orderId">Order ID</a></li>
+            <li th:if="${itemId != null}"><a href="/itemId">Item ID</a></li>
+        </ul>
+    </div>
+</div>
+
+<h1>Basket</h1>
+
+
+</body>
+</html>
