@@ -1,10 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <link rel="stylesheet" href="/css/menu.css" >
+    <title>Order List</title>
 </head>
 <body>
-$END$
+<h1>Order List</h1>
+<div class="dropdown">
+    <button class="menu-btn">Menu</button>
+    <div class="dropdown-content">
+        <ul>
+            <li th:if="${wMain}"><a href="/wMain">wMain</a></li>
+            <li th:if="${customers}"><a href="/customers">Customers</a></li>
+            <li th:if="${customer != null}">
+                <a th:href="@{/customer}" th:text="'Customer ' + ${customer}">Customer</a>
+            </li>
+            <li th:if="${orders}"><a href="/orders">Orders</a></li>
+            <li th:if="${items}"><a href="/items">Items</a></li>
+            <li th:if="${stock}"><a href="/stock">Stock</a></li>
+            <li th:if="${basket}"><a href="/basket">Basket</a></li>
+            <li th:if="${orderId != null}"><a href="/orderId">Order ID</a></li>
+            <li th:if="${itemId != null}"><a href="/itemId">Item ID</a></li>
+        </ul>
+    </div>
+</div>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>Order Number</th>
+        <th>Order Date</th>
+        <th>Customer Number</th>
+        <th>Shipping Instructions</th>
+        <th>Backlog</th>
+        <th>PO Number</th>
+        <th>Shipping Date</th>
+        <th>Shipping Weight</th>
+        <th>Shipping Charge</th>
+        <th>Paid Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ordersList : ${ordersList}">
+        <td th:text="${ordersList.orderNum}"></td>
+        <td th:text="${ordersList.orderDate}"></td>
+        <td th:text="${ordersList.customerNum}"></td>
+        <td th:text="${ordersList.shipInstruct}"></td>
+        <td th:text="${ordersList.backlog}"></td>
+        <td th:text="${ordersList.poNum}"></td>
+        <td th:text="${ordersList.shipDate}"></td>
+        <td th:text="${ordersList.shipWeight}"></td>
+        <td th:text="${ordersList.shipCharge}"></td>
+        <td th:text="${ordersList.paidDate}"></td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

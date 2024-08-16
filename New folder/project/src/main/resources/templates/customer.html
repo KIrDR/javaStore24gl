@@ -1,10 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Form</title>
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/customer.css">
 </head>
 <body>
-$END$
+
+<form>
+    <h2>Customer</h2>
+
+    <div class="dropdown">
+        <button class="menu-btn">Menu</button>
+        <div class="dropdown-content">
+            <ul>
+                <li th:if="${wMain}"><a href="/wMain">wMain</a></li>
+                <li th:if="${customers}"><a href="/customers">Customers</a></li>
+                <li th:if="${customer != null}">
+                    <a th:href="@{/customer}" th:text="'Customer ' + ${customer}">Customer</a>
+                </li>
+                <li th:if="${orders}"><a href="/orders">Orders</a></li>
+                <li th:if="${items}"><a href="/items">Items</a></li>
+                <li th:if="${stock}"><a href="/stock">Stock</a></li>
+                <li th:if="${basket}"><a href="/basket">Basket</a></li>
+                <li th:if="${orderId != null}"><a href="/orderId">Order ID</a></li>
+                <li th:if="${itemId != null}"><a href="/itemId">Item ID</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Group 1 -->
+    <div class="group">
+        <h3>Customer Information</h3>
+        <label for="customer_num">Number</label>
+        <input type="text" id="customer_num" disabled name="customer_num" th:value="${customer_num}">
+
+        <label for="fname">First Name</label>
+        <input type="text" id="fname" disabled name="fname" th:value="${fname}">
+
+        <label for="lname">Last Name</label>
+        <input type="text" id="lname" disabled name="lname" th:value="${lname}">
+
+        <label for="company">Company</label>
+        <input type="text" id="company" disabled name="company" th:value="${company}">
+    </div>
+
+    <!-- Group 2 -->
+    <div class="group">
+        <h3>Address</h3>
+        <label for="address1">Address1</label>
+        <input type="text" id="address1" disabled name="address1" th:value="${address1}">
+
+        <label for="address2">Address2</label>
+        <input type="text" id="address2" disabled name="address2" th:value="${address2}">
+
+        <label for="city">City</label>
+        <input type="text" id="city" disabled name="city" th:value="${city}">
+
+        <label for="state">State</label>
+        <select id="state" name="state" disabled>
+            <option th:each="states : ${states}"
+                    th:value="${states.code}"
+                    th:label="${states.code}"
+                    th:selected="${states.code == state}"></option>
+        </select>
+
+        <label for="zipcode">Zipcode</label>
+        <input type="text" id="zipcode" disabled name="zipcode" th:value="${zipcode}">
+    </div>
+
+    <!-- Group 3 -->
+    <div class="group">
+        <h3>Contact</h3>
+        <button onclick="dialPhone()" type="button" id="callButton" th:text="${phone}" th:style="${phone != null ? '' : 'display: none;'}">Call</button>
+    </div>
+
+    <!-- Group 4 -->
+    <div class="group">
+        <h3>Orders</h3>
+        <label>Orders</label>
+        <button type="button" id="orders" th:text="|Show Orders: ${count}|">Show Orders</button>
+    </div>
+
+</form>
+<div class="buttons">
+
+    <button type="button" id="editButton" onclick="toggleEdit()">Edit</button>
+    <button type="button" id="exportButton" onclick="cancelEdit()">Export</button>
+</div>
+
+<script>
+    function dialPhone() {
+        var phoneNumber = document.getElementById('callButton').textContent.trim();
+        var telUrl = 'tel:' + phoneNumber;
+        window.location.href = telUrl;
+    }
+
+    const originalValues = {};
+
+ function toggleEdit() {
+    const isEditing = document.getElementById('editButton').textContent === 'OK';
+    const inputs = document.querySelectorAll('input[type="text"], select');
+
+    if (!isEditing) {
+        inputs.forEach((input) => {
+            if (input.id !== 'customer_num') {
+                originalValues[input.id] = input.value;
+                input.disabled = false;
+            }
+        });
+        document.getElementById('editButton').textContent = 'OK';
+        document.getElementById('exportButton').textContent = 'Cancel';
+    } else {
+        const formData = {};
+        inputs.forEach((input) => {
+            formData[input.name] = input.value;
+        });
+
+        fetch('/editCustomer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        }).then(response => {
+            if (response.ok) {
+                console.log('Data saved successfully');
+                location.reload();
+            } else {
+                console.error('Failed to save data');
+                response.text().then(text => console.error(text));
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+
+        document.getElementById('editButton').textContent = 'Edit';
+        document.getElementById('exportButton').textContent = 'Export';
+    }
+}
+
+    function cancelEdit() {
+        const inputs = document.querySelectorAll('input[type="text"], select'); // Включаем select в выборку
+        inputs.forEach((input) => {
+            if (input.id !== 'customer_num') {
+                input.value = originalValues[input.id];
+            }
+            input.disabled = true;
+        });
+        document.getElementById('editButton').textContent = 'Edit';
+        document.getElementById('exportButton').textContent = 'Export';
+    }
+  document.addEventListener('DOMContentLoaded', () => {
+        const select = document.getElementById('state');
+        if (select) {
+            select.disabled = true;
+        }
+    });
+</script>
+
 </body>
 </html>

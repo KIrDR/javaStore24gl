@@ -13,7 +13,9 @@
         <ul>
             <li th:if="${wMain}"><a href="/wMain">wMain</a></li>
             <li th:if="${customers}"><a href="/customers">Customers</a></li>
-            <li th:if="${customer != null}"><a href="/customer">Customer</a></li>
+            <li th:if="${customer != null}">
+                <a th:href="@{/customer}" th:text="'Customer ' + ${customer}">Customer</a>
+            </li>
             <li th:if="${orders}"><a href="/orders">Orders</a></li>
             <li th:if="${items}"><a href="/items">Items</a></li>
             <li th:if="${stock}"><a href="/stock">Stock</a></li>
@@ -23,7 +25,6 @@
         </ul>
     </div>
 </div>
-
 <h1>Basket</h1>
 
 

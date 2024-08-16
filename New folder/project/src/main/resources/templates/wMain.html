@@ -1,26 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Main Menu</title>
     <link rel="stylesheet" href="/css/wMain.css" >
+    <link rel="stylesheet" href="/css/menu.css" >
 </head>
 <body>
 <h1>Welcome to the Main Menu</h1>
+
+<div class="dropdown">
+    <button class="menu-btn">Menu</button>
+    <div class="dropdown-content">
+        <ul>
+            <li th:if="${wMain}"><a href="/wMain">wMain</a></li>
+            <li th:if="${customers}"><a href="/customers">Customers</a></li>
+            <li th:if="${customer != null}">
+                <a th:href="@{/customer}" th:text="'Customer ' + ${customer}">Customer</a>
+            </li>
+            <li th:if="${orders}"><a href="/orders">Orders</a></li>
+            <li th:if="${items}"><a href="/items">Items</a></li>
+            <li th:if="${stock}"><a href="/stock">Stock</a></li>
+            <li th:if="${basket}"><a href="/basket">Basket</a></li>
+            <li th:if="${orderId != null}"><a href="/orderId">Order ID</a></li>
+            <li th:if="${itemId != null}"><a href="/itemId">Item ID</a></li>
+        </ul>
+    </div>
+</div>
+
+
 <div class="container">
     <a href="/customers" class="button">
-        <img src="/image/customers.svg" alt="Customers" width="40" height="40"/>
+        <img src="/images/customers.png" alt="Customers" width="40" height="40"/>
         Customers
     </a>
     <a href="/orders" class="button">
-        <img src="/image/orders.svg" alt="Orders" width="40" height="40"/>
+        <img src="/images/orders.png" alt="Orders" width="40" height="40"/>
         Orders
     </a>
-    <a href="/stocks" class="button">
-        <img src="/image/stock.svg" alt="Stock" width="40" height="40"/>
+    <a href="/stock" class="button">
+        <img src="/images/stock.png" alt="Stock" width="40" height="40"/>
         Stock
     </a>
     <a href="/basket" class="button">
-        <img src="/image/basket.svg" alt="Basket" width="40" height="40"/>
+        <img src="/images/cart.png" alt="Basket" width="40" height="40"/>
         Basket
     </a>
 </div>

@@ -1,40 +1,249 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Customer List</title>
+    <link rel="stylesheet" href="/css/addCustomer.css" >
 </head>
 <body>
 <h1>Customer List</h1>
-<table border="1">
-    <thead>
-    <tr>
-        <th>Customer Number</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Company</th>
-        <th>Address 1</th>
-        <th>Address 2</th>
-        <th>City</th>
-        <th>State</th>
-        <th>Zipcode</th>
-        <th>Phone</th>
-    </tr>
-    </thead>
-    <tbody>
 
-    <tr th:each="customer : ${customers}">
-        <td th:text="${customer.customerNum}"></td>
-        <td th:text="${customer.fname}"></td>
-        <td th:text="${customer.lname}"></td>
-        <td th:text="${customer.company}"></td>
-        <td th:text="${customer.address1}"></td>
-        <td th:text="${customer.address2}"></td>
-        <td th:text="${customer.city}"></td>
-        <td th:text="${customer.state}"></td>
-        <td th:text="${customer.zipcode}"></td>
-        <td th:text="${customer.phone}"></td>
-    </tr>
-    </tbody>
-</table>
+<div class="dropdown">
+    <button class="menu-btn">Menu</button>
+    <div class="dropdown-content">
+        <ul>
+            <li th:if="${wMain}"><a href="/wMain">wMain</a></li>
+            <li th:if="${customers}"><a href="/customers">Customers</a></li>
+            <li th:if="${customer != null}">
+                <a th:href="@{/customer}" th:text="'Customer ' + ${customer}">Customer</a>
+            </li>
+            <li th:if="${orders}"><a href="/orders">Orders</a></li>
+            <li th:if="${items}"><a href="/items">Items</a></li>
+            <li th:if="${stock}"><a href="/stock">Stock</a></li>
+            <li th:if="${basket}"><a href="/basket">Basket</a></li>
+            <li th:if="${orderId != null}"><a href="/orderId">Order ID</a></li>
+            <li th:if="${itemId != null}"><a href="/itemId">Item ID</a></li>
+        </ul>
+    </div>
+</div>
+
+<div class="container">
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Customer Number</th>
+            <th>Full Name</th>
+            <th>Company, City</th>
+        </tr>
+        </thead>
+        <tbody id="customerTable">
+        <tr th:each="customersList : ${customersList}" data-customer-num="${customersList.customerNum}" onclick="highlightRow(this)">
+            <td th:text="${customersList.customerNum}"></td>
+            <td th:text="${customersList.fname} + ' ' + ${customersList.lname}"></td>
+            <td th:text="${customersList.company} + ', ' + ${customersList.city}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="buttons">
+        <button type="button" id="exitButton" onclick="shutdownServer()">Exit</button>
+        <button type="button" id="appendButton" onclick="document.getElementById('id01').style.display='block'">Append</button>
+        <button type="button" id="deleteButton">Delete</button>
+        <button type="button" id="searchButton">Search</button>
+    </div>
+
+
+
+
+    <div id="id01" class="modal">
+        <div class="modal-content">
+            <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Закрыть">&times;</span>
+            <h2>New Customer</h2>
+            <form id="addCustomerForm" action="/addCustomer" method="POST">
+                <div class="form-fields">
+                    <div class="form-group">
+                        <label for="fname">First Name</label>
+                        <input type="text" id="fname" name="fname">
+                    </div>
+                    <div class="form-group">
+                        <label for="lname">Last Name</label>
+                        <input type="text" id="lname" name="lname">
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company</label>
+                        <input type="text" id="company" name="company">
+                    </div>
+                    <div class="form-group">
+                        <label for="address1">Address1</label>
+                        <input type="text" id="address1" name="address1">
+                    </div>
+                    <div class="form-group">
+                        <label for="address2">Address2</label>
+                        <input type="text" id="address2" name="address2">
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State</label>
+                        <input type="text" id="state" name="state">
+                    </div>
+                    <div class="form-group">
+                        <label for="zipcode">Zipcode</label>
+                        <input type="text" id="zipcode" name="zipcode">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telephone</label>
+                        <input type="text" id="phone" name="phone">
+                    </div>
+                </div>
+                <div class="button-container">
+                    <button type="button" onclick="addCustomer()">OK</button>
+                    <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+                    <button type="button" id="importButton">Import</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+
+    function addCustomer() {
+
+       const inputs = document.querySelectorAll('input[type="text"]');
+       const formData = {};
+       inputs.forEach((input) => {
+        formData[input.name] = input.value;
+    });
+
+    fetch('/addCustomer', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    }).then(response => {
+        if (response.ok) {
+            console.log('Data saved successfully');
+            location.reload();
+        } else {
+            console.error('Failed to save data');
+            response.text().then(text => console.error(text));
+        }
+    }).catch(error => {
+        console.error('Error:', error);
+    });
+    }
+
+
+                   /*<![CDATA[*/
+                   var customerNumber = [[${customer}]];
+                   /*]]>*/
+
+
+                   function shutdownServer() {
+                   fetch('/shutdown', {
+                       method: 'PUT',
+                       headers: {
+                           'Content-Type': 'application/json'
+                       }
+                   })
+                   .then(response => {
+                       if (response.ok) {
+                           console.log('Server is shutting down...');
+                           alert('Server is shutting down...');
+                       } else {
+                           window.location.reload();
+                       }
+                   })
+                   .catch(error => {
+                       alert('server is shutdown');
+                           window.location.reload();
+                   });
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                   document.getElementById('deleteButton').addEventListener('click', function() {
+
+                       var highlightedRow = document.querySelector('#customerTable tr.highlighted');
+                       if (highlightedRow) {
+                           var customerNumber = parseInt(highlightedRow.querySelector('td').textContent.trim(), 10);
+
+                           fetch('/deleteCustomer', {
+                               method: 'DELETE',
+                               headers: {
+                                   'Content-Type': 'application/json'
+                               },
+                               body: JSON.stringify(customerNumber)
+                           })
+                           .then(response => {
+                               if (response.ok) {
+                                   return response.text();
+                               } else {
+                                   return response.text().then(text => {
+                                       throw new Error(text);
+                                   });
+                               }
+                           })
+                           .then(text => {
+                               console.log('Success:', text);
+                               window.location.reload()
+                           })
+                           .catch(error => {
+                               console.error('Error:', error);
+                               alert('Ошибка удаления: ' + error.message);
+                           });
+                       } else {
+                           alert('Выделите строку для удаления');
+                       }
+                   });
+                });
+
+
+
+                   function highlightRow(row) {
+                       var rows = document.querySelectorAll('#customerTable tr');
+                       rows.forEach(function(r) {
+                           r.classList.remove('highlighted');
+                       });
+                       row.classList.add('highlighted');
+                       var customerNumber = row.querySelector('td').textContent.trim();
+
+                       fetch('/updateCustomerNumber', {
+                           method: 'PUT',
+                           headers: {
+                               'Content-Type': 'application/json'
+                           },
+                           body: JSON.stringify(customerNumber)
+                       })
+                       .then(response => {
+                           if (response.ok) {
+                               return response.text();
+                           }
+                           throw new Error('Network response was not ok.');
+                       })
+                       .then(text => {
+                           console.log('Success:', text);
+                           window.location.reload();
+                       })
+                       .catch(error => {
+                           console.error('Error:', error);
+                       });
+                   }
+
+                   document.addEventListener('DOMContentLoaded', function() {
+                       if (customerNumber) {
+                           var rows = document.querySelectorAll('#customerTable tr');
+                           rows.forEach(function(row) {
+                               var firstCell = row.querySelector('td');
+                               if (firstCell && firstCell.textContent.trim() === customerNumber.toString()) {
+                                   row.classList.add('highlighted');
+                               }
+                           });
+                       }
+                   });
+</script>
 </body>
 </html>
