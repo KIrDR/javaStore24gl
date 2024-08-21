@@ -14,6 +14,10 @@ public class StockService {
     private final StockRepository stockRepository = new StockRepository();
 
 
+    public Stock selectStock(Integer stockId, String manuCode) {
+        return stockRepository.selectStock(stockId, manuCode);
+    }
+
     public List<Stock> findAll() {
         return stockRepository.findAll();
     }

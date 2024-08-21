@@ -18,15 +18,37 @@
             </li>
             <li th:if="${orders}"><a href="/orders">Orders</a></li>
             <li th:if="${items}"><a href="/items">Items</a></li>
-            <li th:if="${stock}"><a href="/stock">Stock</a></li>
+            <li th:if="${stock}"><a href="/stocks">Stock</a></li>
+            <li th:if="${stockId}">
+                <a href="/stock"  th:text="'Stock ' + ${stockId} + ${stockManu}">Stock</a>
+            </li>
             <li th:if="${basket}"><a href="/basket">Basket</a></li>
-            <li th:if="${orderId != null}"><a href="/orderId">Order ID</a></li>
-            <li th:if="${itemId != null}"><a href="/itemId">Item ID</a></li>
+            <li th:if="${orderId != null}">
+                <a th:href="@{/order}" th:text="'Order ' + ${orderId}">Order</a>
+            </li>
+            <li th:if="${itemId != null}">
+                <a href="/itemId" th:text="'Item ' + ${itemId}">Item ID</a>
+            </li>
         </ul>
     </div>
 </div>
-<h1>Basket</h1>
+<h2>Basket Items</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Text</th>
+        <th>Total Price </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${basket}">
+        <td th:text="${item.description}"></td>
+        <td th:text="${item.totalPrice}"></td>
+    </tr>
+    </tbody>
+</table>
 
-
+<h3>Total</h3>
+<p th:text="${total}"></p>
 </body>
 </html>

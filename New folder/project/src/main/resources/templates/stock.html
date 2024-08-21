@@ -2,10 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Stock List</title>
-    <link rel="stylesheet" href="/css/menu.css" >
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/order.css">
 </head>
 <body>
-<h1>Stock List</h1>
 
 <div class="dropdown">
     <button class="menu-btn">Menu</button>
@@ -18,35 +18,99 @@
             </li>
             <li th:if="${orders}"><a href="/orders">Orders</a></li>
             <li th:if="${items}"><a href="/items">Items</a></li>
-            <li th:if="${stock}"><a href="/stock">Stock</a></li>
+            <li th:if="${stock}"><a href="/stocks">Stock</a></li>
+            <li th:if="${stockId}">
+                <a href="/stock" th:text="'Stock ' + ${stockId.stockNum} + ${stockManu}">Stock</a>
+            </li>
             <li th:if="${basket}"><a href="/basket">Basket</a></li>
-            <li th:if="${orderId != null}"><a href="/orderId">Order ID</a></li>
-            <li th:if="${itemId != null}"><a href="/itemId">Item ID</a></li>
+            <li th:if="${orderId != null}">
+                <a th:href="@{/order}" th:text="'Order ' + ${orderId}">Order</a>
+            </li>
+            <li th:if="${itemId != null}">
+                <a href="/itemId" th:text="'Item ' + ${itemId}">Item ID</a>
+            </li>
         </ul>
     </div>
 </div>
 
-<table border="1">
-    <thead>
-    <tr>
-        <th>Stock Number</th>
-        <th>Manufacturer Code</th>
-        <th>Description</th>
-        <th>Unit Price</th>
-        <th>Unit</th>
-        <th>Unit Description</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="stockList : ${stockList}">
-        <td th:text="${stockList.stockNum}"></td>
-        <td th:text="${stockList.manuCode}"></td>
-        <td th:text="${stockList.description}"></td>
-        <td th:text="${stockList.unitPrice}"></td>
-        <td th:text="${stockList.unit}"></td>
-        <td th:text="${stockList.unitDescr}"></td>
-    </tr>
-    </tbody>
-</table>
+<form th:object="${stockId}">
+    <div class="form-group">
+        <label for="stock_num">Stock Num:</label>
+        <input type="text" id="stock_num" th:value="${stockId.stockNum}" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="manu_code">Manu Code:</label>
+        <input type="text" id="manu_code" th:value="${stockId.manuCode}" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="description">Description:</label>
+        <input type="text" id="description" th:value="${stockId.description}" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="unit_price">Unit Price:</label>
+        <input type="text" id="unit_price" th:value="${stockId.unitPrice}" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="unit">Unit:</label>
+        <input type="text" id="unit" th:value="${stockId.unit}" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="unit_descr">Unit Description:</label>
+        <input type="text" id="unit_descr" th:value="${stockId.unitDescr}" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="image">Image:</label>
+        <img src="#" alt="Stock Image" id="image">
+    </div>
+</form>
+
+<div class="buttons">
+    <button type="button" id="addBasketButton" onclick="putAddBasket()">Add to Basket</button>
+</div>
+
+<script th:inline="javascript">
+    var stockNum = [[${stockId.stockNum}]];
+    var imgElement = document.getElementById('image');
+
+    function putAddBasket() {
+        fetch('/addToBasket', {
+    method: 'PUT',
+    headers: {
+        'Content-Type': 'application/json'
+    }
+})
+.then(response => {
+    if (response.ok) {
+     window.location.href='/basket'
+    }
+})
+
+    }
+
+    function loadImage(src) {
+        return new Promise(function(resolve, reject) {
+            var img = new Image();
+            img.onload = function() { resolve(src); };
+            img.onerror = function() { reject(src); };
+            img.src = src + '?t=' + new Date().getTime();
+        });
+    }
+
+    Promise.race([
+        loadImage('/images/' + stockNum + '.png'),
+        loadImage('/images/' + stockNum + '.jpg')
+    ]).then(function(src) {
+        imgElement.src = src;
+    }).catch(function() {
+        imgElement.src = '/images/noarticle.png?t=' + new Date().getTime();
+    });
+</script>
+
 </body>
 </html>

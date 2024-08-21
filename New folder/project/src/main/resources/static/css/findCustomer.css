@@ -1,0 +1,81 @@
+/* Search Form Styling */
+#find_customer .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto 15% auto;
+    border: 1px solid #888;
+    width: 80%;
+    padding: 16px;
+}
+
+#find_customer .close {
+    position: absolute;
+    right: 25px;
+    top: 0;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+#find_customer .close:hover,
+#find_customer .close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+#find_customer .form-group {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+}
+
+#find_customer label {
+    flex: 0 0 150px;
+    margin-right: 10px;
+    text-align: right;
+}
+
+#find_customer select,
+#find_customer input[type=text] {
+    flex: 1;
+    padding: 12px 20px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    width: 400px;
+}
+
+#find_customer .form-buttons {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#find_customer .form-buttons button {
+    background-color: #536dfd;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 8px 5px;
+    width: 120px;
+}
+
+#find_customer .form-buttons button:hover {
+    opacity: 0.8;
+}
+
+#find_customer .form-buttons .cancelbtn {
+    background-color: #f44336;
+}
+
+@media screen and (max-width: 300px) {
+    #find_customer span.psw {
+        display: block;
+        float: none;
+    }
+    #find_customer .cancelbtn {
+        width: 100%;
+    }
+}

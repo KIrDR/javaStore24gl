@@ -5,6 +5,8 @@ public class Menu {
     private static Integer customer = null;
     private static boolean orders = false;
     private static boolean stock = false;
+    private static Integer stockId = null;
+    private static String stockManu = null;
     private static boolean items = false;
     private static boolean basket = false;
     private static Integer orderId = null;
@@ -78,6 +80,22 @@ public class Menu {
 
     public static void setItemId(Integer itemId) {
         Menu.itemId = itemId;
+    }
+
+    public static Integer getStockId() {
+        return stockId;
+    }
+
+    public static void  setStockId(Integer stockId){
+        Menu.stockId = stockId;
+    }
+
+    public static String getStockManu() {
+        return stockManu;
+    }
+
+    public static void  setStockManu(String manufactureCode){
+        Menu.stockManu = manufactureCode;
     }
 }
 

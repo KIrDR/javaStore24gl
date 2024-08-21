@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Stock List</title>
+    <link rel="stylesheet" href="/css/stock.css">
+    <link rel="stylesheet" href="/css/menu.css">
+</head>
+<body>
+<h1>Stock List</h1>
+
+
+<div class="dropdown">
+    <button class="menu-btn">Menu</button>
+    <div class="dropdown-content">
+        <ul>
+            <li th:if="${wMain}"><a href="/wMain">wMain</a></li>
+            <li th:if="${customers}"><a href="/customers">Customers</a></li>
+            <li th:if="${customer != null}">
+                <a th:href="@{/customer}" th:text="'Customer ' + ${customer}">Customer</a>
+            </li>
+            <li th:if="${orders}"><a href="/orders">Orders</a></li>
+            <li th:if="${items}"><a href="/items">Items</a></li>
+            <li th:if="${stock}"><a href="/stocks">Stock</a></li>
+            <li th:if="${stockId}">
+                <a href="/stock"  th:text="'Stock ' + ${stockId} + ${stockManu}">Stock</a>
+            </li>
+            <li th:if="${basket}"><a href="/basket">Basket</a></li>
+            <li th:if="${orderId != null}">
+                <a th:href="@{/order}" th:text="'Order ' + ${orderId}">Order</a>
+            </li>
+            <li th:if="${itemId != null}">
+                <a href="/itemId" th:text="'Item ' + ${itemId}">Item ID</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<table border="1" id="stockTable">
+    <thead>
+    <tr>
+        <th>Stock Number</th>
+        <th>Manufacturer Code</th>
+        <th>Unit Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="stockList : ${stockList}" th:onclick="highlightRow(this)">
+        <td class="stockNum" th:text="${stockList.stockNum}"></td>
+        <td th:text="${stockList.manuCode}"></td>
+        <td th:text="${stockList.unitPrice}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var selectedStockNumber = [[${itemId}]];
+    /*]]>*/
+
+    var allItems = [];
+    var itemsNumbers = [];
+
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".stockNum").forEach(function(td) {
+            let stockNum = td.textContent.trim();
+            stockNum = stockNum.padStart(4, '0');
+            td.textContent = stockNum;
+            allItems.push(stockNum);
+        });
+
+        itemsNumbers = allItems.map(function(item){
+            return parseInt(item, 10);
+        });
+
+    });
+
+
+
+
+    function highlightRow(row) {
+        var rows = document.querySelectorAll('#stockTable tr');
+        rows.forEach(function(r) {
+            r.classList.remove('highlighted');
+        });
+        row.classList.add('highlighted');
+        var stockNumber = row.querySelector('.stockNum').textContent.trim();
+        var manuCode = row.cells[1].textContent.trim();
+
+        var data = {
+        stockNumber: parseInt(stockNumber, 10),
+        manuCode: manuCode
+
+        };
+
+        fetch('/updateStockNumber', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+           body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            }
+            throw new Error('Network response was not ok.');
+        })
+        .then(text => {
+            console.log('Success:', text);
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+
+</body>
+</html>

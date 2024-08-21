@@ -30,6 +30,7 @@ public class CustomerService {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     Customer customer = new Customer();
+                    customer.setCustomerNum(resultSet.getInt("customer_num"));
                     customer.setFname(resultSet.getString("fname"));
                     customer.setLname(resultSet.getString("lname"));
                     customer.setCompany(resultSet.getString("company"));

@@ -68,3 +68,54 @@ fetch('/addCustomer', {
     console.error('Error:', error);
 });
 }
+
+
+
+function findCustomer() {
+    var colname = document.getElementById("colname").value;
+    var operator = document.getElementById("operator").value;
+    var value = document.getElementById("value").value;
+
+    let sqlCondition = "";
+
+    switch(operator) {
+        case "Contains":
+            sqlCondition = colname + " LIKE '%" + value + "%'";
+            break;
+        case "Not contains":
+            sqlCondition = colname + " NOT LIKE '%" + value + "%'";
+            break;
+        case "Begins with":
+            sqlCondition = colname + " LIKE '" + value + "%'";
+            break;
+        case "Ends with":
+            sqlCondition = colname + " LIKE '%" + value + "'";
+            break;
+        case "Is equal to":
+            sqlCondition = colname + " = '" + value + "'";
+            break;
+        default:
+            alert("Please select a valid operator.");
+            return;
+    }
+
+    const url = new URL(window.location.origin + "/customers");
+    url.searchParams.append("condition", sqlCondition);
+
+    window.location.href = url.href;
+}
+
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll(".stockNum").forEach(function(td) {
+        let stockNum = td.textContent.trim();
+        stockNum = stockNum.padStart(4, '0');
+        td.textContent = stockNum;
+    });
+});
+
+    var item = 2 ; 
+
+    var selectedItemNumber = item.trim().padStart(4,'0'); 

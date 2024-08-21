@@ -3,9 +3,11 @@
 <head>
     <title>Customer List</title>
     <link rel="stylesheet" href="/css/addCustomer.css" >
+    <link rel="stylesheet" href="/css/findCustomer.css" >
 </head>
 <body>
 <h1>Customer List</h1>
+
 
 <div class="dropdown">
     <button class="menu-btn">Menu</button>
@@ -18,10 +20,17 @@
             </li>
             <li th:if="${orders}"><a href="/orders">Orders</a></li>
             <li th:if="${items}"><a href="/items">Items</a></li>
-            <li th:if="${stock}"><a href="/stock">Stock</a></li>
+            <li th:if="${stock}"><a href="/stocks">Stock</a></li>
+            <li th:if="${stockId}">
+                <a href="/stock"  th:text="'Stock ' + ${stockId} + ${stockManu}">Stock</a>
+            </li>
             <li th:if="${basket}"><a href="/basket">Basket</a></li>
-            <li th:if="${orderId != null}"><a href="/orderId">Order ID</a></li>
-            <li th:if="${itemId != null}"><a href="/itemId">Item ID</a></li>
+            <li th:if="${orderId != null}">
+                <a th:href="@{/order}" th:text="'Order ' + ${orderId}">Order</a>
+            </li>
+            <li th:if="${itemId != null}">
+                <a href="/itemId" th:text="'Item ' + ${itemId}">Item ID</a>
+            </li>
         </ul>
     </div>
 </div>
@@ -46,17 +55,52 @@
 
     <div class="buttons">
         <button type="button" id="exitButton" onclick="shutdownServer()">Exit</button>
-        <button type="button" id="appendButton" onclick="document.getElementById('id01').style.display='block'">Append</button>
+        <button type="button" id="appendButton" onclick="document.getElementById('add_customer').style.display='block'">Append</button>
         <button type="button" id="deleteButton">Delete</button>
-        <button type="button" id="searchButton">Search</button>
+        <button type="button" id="searchButton" onclick="document.getElementById('find_customer').style.display='block'">Search</button>
+    </div>
+    <div id="find_customer" class="modal">
+        <div class="modal-content">
+            <span onclick="document.getElementById('find_customer').style.display='none'" class="close" title="Закрыть">&times;</span>
+            <h2>Find Customer</h2>
+            <form id="findCustomerForm">
+                <div class="form-fields">
+                    <div class="form-group">
+                        <label for="colname">Find In</label>
+                        <select id="colname" name="colname">
+                            <option value="lname">Last Name</option>
+                            <option value="fname">First Name</option>
+                            <option value="company">Company</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="operator">Operator</label>
+                        <select id="operator" name="operator">
+                            <option value="Contains">Contains</option>
+                            <option value="Not contains">Not contains</option>
+                            <option value="Begins with">Begins with</option>
+                            <option value="Ends with">Ends with</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="value">Pattern</label>
+                        <input type="text" id="value" name="value"/>
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" onclick="findCustomer()">Search</button>
+                    <button type="button" onclick="document.getElementById('find_customer').style.display='none'">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 
 
 
 
-    <div id="id01" class="modal">
+    <div id="add_customer" class="modal">
         <div class="modal-content">
-            <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Закрыть">&times;</span>
+            <span onclick="document.getElementById('add_customer').style.display='none'" class="close" title="Закрыть">&times;</span>
             <h2>New Customer</h2>
             <form id="addCustomerForm" action="/addCustomer" method="POST">
                 <div class="form-fields">
@@ -99,7 +143,7 @@
                 </div>
                 <div class="button-container">
                     <button type="button" onclick="addCustomer()">OK</button>
-                    <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+                    <button type="button" onclick="document.getElementById('add_customer').style.display='none'" class="cancelbtn">Cancel</button>
                     <button type="button" id="importButton">Import</button>
                 </div>
             </form>
@@ -107,143 +151,167 @@
     </div>
 
 </div>
-
 <script th:inline="javascript">
+    function findCustomer() {
+          var colname = document.getElementById("colname").value;
+          var operator = document.getElementById("operator").value;
+          var value = document.getElementById("value").value;
 
-    function addCustomer() {
+          let sqlCondition = " where ";
 
-       const inputs = document.querySelectorAll('input[type="text"]');
-       const formData = {};
-       inputs.forEach((input) => {
-        formData[input.name] = input.value;
-    });
+          switch(operator) {
+              case "Contains":
+                  sqlCondition += colname + " LIKE '%" + value + "%'";
+                  break;
+              case "Not contains":
+                  sqlCondition += colname + " NOT LIKE '%" + value + "%'";
+                  break;
+              case "Begins with":
+                  sqlCondition += colname + " LIKE '" + value + "%'";
+                  break;
+              case "Ends with":
+                  sqlCondition += colname + " LIKE '%" + value + "'";
+                  break;
+              case "Is equal to":
+                  sqlCondition += colname + " = '" + value + "'";
+                  break;
+              default:
+                  alert("Please select a valid operator.");
+                  return;
+          }
 
-    fetch('/addCustomer', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-    }).then(response => {
-        if (response.ok) {
-            console.log('Data saved successfully');
-            location.reload();
-        } else {
-            console.error('Failed to save data');
-            response.text().then(text => console.error(text));
-        }
-    }).catch(error => {
-        console.error('Error:', error);
-    });
-    }
+          const url = new URL(window.location.origin + "/customers");
+          url.searchParams.append("condition", sqlCondition);
 
+          window.location.href = url.href;
+      }
 
-                   /*<![CDATA[*/
-                   var customerNumber = [[${customer}]];
-                   /*]]>*/
+      function addCustomer() {
+          const inputs = document.querySelectorAll('input[type="text"]');
+          const formData = {};
+          inputs.forEach((input) => {
+              formData[input.name] = input.value;
+          });
 
+          fetch('/addCustomer', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(formData)
+          }).then(response => {
+              if (response.ok) {
+                  console.log('Data saved successfully');
+                  location.reload();
+              } else {
+                  console.error('Failed to save data');
+                  response.text().then(text => console.error(text));
+              }
+          }).catch(error => {
+              console.error('Error:', error);
+          });
+      }
 
-                   function shutdownServer() {
-                   fetch('/shutdown', {
-                       method: 'PUT',
-                       headers: {
-                           'Content-Type': 'application/json'
-                       }
-                   })
-                   .then(response => {
-                       if (response.ok) {
-                           console.log('Server is shutting down...');
-                           alert('Server is shutting down...');
-                       } else {
-                           window.location.reload();
-                       }
-                   })
-                   .catch(error => {
-                       alert('server is shutdown');
-                           window.location.reload();
-                   });
-                }
+    var customerNumber = [[${customer}]];
 
-                document.addEventListener('DOMContentLoaded', function() {
-                   document.getElementById('deleteButton').addEventListener('click', function() {
+      function shutdownServer() {
+          fetch('/shutdown', {
+              method: 'PUT',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          })
+          .then(response => {
+              if (response.ok) {
+                  console.log('Server is shutting down...');
+                  alert('Server is shutting down...');
+              } else {
+                  window.location.reload();
+              }
+          })
+          .catch(error => {
+              alert('server is shutdown');
+              window.location.reload();
+          });
+      }
 
-                       var highlightedRow = document.querySelector('#customerTable tr.highlighted');
-                       if (highlightedRow) {
-                           var customerNumber = parseInt(highlightedRow.querySelector('td').textContent.trim(), 10);
+      document.addEventListener('DOMContentLoaded', function() {
+          document.getElementById('deleteButton').addEventListener('click', function() {
+              var highlightedRow = document.querySelector('#customerTable tr.highlighted');
+              if (highlightedRow) {
+                  var customerNumber = parseInt(highlightedRow.querySelector('td').textContent.trim(), 10);
 
-                           fetch('/deleteCustomer', {
-                               method: 'DELETE',
-                               headers: {
-                                   'Content-Type': 'application/json'
-                               },
-                               body: JSON.stringify(customerNumber)
-                           })
-                           .then(response => {
-                               if (response.ok) {
-                                   return response.text();
-                               } else {
-                                   return response.text().then(text => {
-                                       throw new Error(text);
-                                   });
-                               }
-                           })
-                           .then(text => {
-                               console.log('Success:', text);
-                               window.location.reload()
-                           })
-                           .catch(error => {
-                               console.error('Error:', error);
-                               alert('Ошибка удаления: ' + error.message);
-                           });
-                       } else {
-                           alert('Выделите строку для удаления');
-                       }
-                   });
-                });
+                  fetch('/deleteCustomer', {
+                      method: 'DELETE',
+                      headers: {
+                          'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify(customerNumber)
+                  })
+                  .then(response => {
+                      if (response.ok) {
+                          return response.text();
+                      } else {
+                          return response.text().then(text => {
+                              throw new Error(text);
+                          });
+                      }
+                  })
+                  .then(text => {
+                      console.log('Success:', text);
+                      window.location.reload();
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                      alert('Ошибка удаления: ' + error.message);
+                  });
+              } else {
+                  alert('Выделите строку для удаления');
+              }
+          });
+      });
 
+      function highlightRow(row) {
+          var rows = document.querySelectorAll('#customerTable tr');
+          rows.forEach(function(r) {
+              r.classList.remove('highlighted');
+          });
+          row.classList.add('highlighted');
+          var customerNumber = row.querySelector('td').textContent.trim();
 
+          fetch('/updateCustomerNumber', {
+              method: 'PUT',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(customerNumber)
+          })
+          .then(response => {
+              if (response.ok) {
+                  return response.text();
+              }
+              throw new Error('Network response was not ok.');
+          })
+          .then(text => {
+              console.log('Success:', text);
+              window.location.reload();
+          })
+          .catch(error => {
+              console.error('Error:', error);
+          });
+      }
 
-                   function highlightRow(row) {
-                       var rows = document.querySelectorAll('#customerTable tr');
-                       rows.forEach(function(r) {
-                           r.classList.remove('highlighted');
-                       });
-                       row.classList.add('highlighted');
-                       var customerNumber = row.querySelector('td').textContent.trim();
-
-                       fetch('/updateCustomerNumber', {
-                           method: 'PUT',
-                           headers: {
-                               'Content-Type': 'application/json'
-                           },
-                           body: JSON.stringify(customerNumber)
-                       })
-                       .then(response => {
-                           if (response.ok) {
-                               return response.text();
-                           }
-                           throw new Error('Network response was not ok.');
-                       })
-                       .then(text => {
-                           console.log('Success:', text);
-                           window.location.reload();
-                       })
-                       .catch(error => {
-                           console.error('Error:', error);
-                       });
-                   }
-
-                   document.addEventListener('DOMContentLoaded', function() {
-                       if (customerNumber) {
-                           var rows = document.querySelectorAll('#customerTable tr');
-                           rows.forEach(function(row) {
-                               var firstCell = row.querySelector('td');
-                               if (firstCell && firstCell.textContent.trim() === customerNumber.toString()) {
-                                   row.classList.add('highlighted');
-                               }
-                           });
-                       }
-                   });
+      document.addEventListener('DOMContentLoaded', function() {
+          if (customerNumber) {
+              var rows = document.querySelectorAll('#customerTable tr');
+              rows.forEach(function(row) {
+                  var orderNumber = row.querySelector('td').textContent.trim();
+                  if (orderNumber === customerNumber.toString()) {
+                      row.classList.add('highlighted');
+                  }
+              });
+          }
+      });
 </script>
 </body>
 </html>

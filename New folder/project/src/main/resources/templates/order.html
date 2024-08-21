@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/order.css">
+</head>
+<body>
+
+
+<div class="dropdown">
+    <button class="menu-btn">Menu</button>
+    <div class="dropdown-content">
+        <ul>
+            <li th:if="${wMain}"><a href="/wMain">wMain</a></li>
+            <li th:if="${customers}"><a href="/customers">Customers</a></li>
+            <li th:if="${customer != null}">
+                <a th:href="@{/customer}" th:text="'Customer ' + ${customer}">Customer</a>
+            </li>
+            <li th:if="${orders}"><a href="/orders">Orders</a></li>
+            <li th:if="${items}"><a href="/items">Items</a></li>
+            <li th:if="${stock}"><a href="/stocks">Stock</a></li>
+            <li th:if="${stockId}">
+                <a href="/stock"  th:text="'Stock ' + ${stockId} + ${stockManu}">Stock</a>
+            </li>
+            <li th:if="${basket}"><a href="/basket">Basket</a></li>
+            <li th:if="${orderId != null}">
+                <a th:href="@{/order}" th:text="'Order ' + ${orderId}">Order</a>
+            </li>
+            <li th:if="${itemId != null}">
+                <a href="/itemId" th:text="'Item ' + ${itemId}">Item ID</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<form>
+    <h2>Order Details</h2>
+
+    <div class="group">
+        <h3>Order Information</h3>
+        <label for="orderId">Order Number</label>
+        <input type="text" id="orderId" disabled name="orderId" th:value="${order_num}">
+
+        <label for="orderDate">Order Date</label>
+        <input type="text" id="orderDate" disabled name="orderDate" th:value="${order_date}">
+
+        <label for="customer">Customer Number</label>
+        <input type="text" id="customer" disabled name="customer" th:value="${customer_num}">
+
+        <label for="shipInstruct">Ship Instructions</label>
+        <input type="text" id="shipInstruct" disabled name="shipInstruct" th:value="${ship_instruct}">
+
+        <label>Backlog</label>
+        <div class="custom-checkbox">
+            <input type="checkbox" id="backlog" disabled >
+            <div class="checkbox"></div>
+        </div>
+        <br>
+        <label for="poNum">PO Number</label>
+        <input type="text" id="poNum" disabled name="poNum" th:value="${po_num}">
+
+        <label for="shipDate">Ship Date</label>
+        <input type="text" id="shipDate" disabled name="shipDate" th:value="${ship_date}">
+
+        <label for="shipWeight">Ship Weight</label>
+        <input type="text" id="shipWeight" disabled name="shipWeight" th:value="${ship_weight}">
+
+        <label for="shipCharge">Ship Charge</label>
+        <input type="text" id="shipCharge" disabled name="shipCharge" th:value="${ship_charge}">
+
+        <label for="paidDate">Paid Date</label>
+        <input type="text" id="paidDate" disabled name="paidDate" th:value="${paid_date}">
+    </div>
+    <div class="group">
+        <h3>Order Items</h3>
+           <button type="button" id="items" th:text="|Show items: ${count_item}|">Show items</button>
+    </div>
+
+</form>
+
+<div class="buttons">
+    <button type="button" onclick="window.location.href='/customers'">Customer</button>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var backlogValue = "[[${backlog}]]" ;
+        var backlogCheckbox = document.getElementById('backlog');
+
+        backlogCheckbox.checked = (backlogValue === 'y');
+    });
+</script>
+</body>
+</html>

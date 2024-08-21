@@ -1,9 +1,7 @@
 package ispirer.study.project.controller;
 
-import ispirer.study.project.model.Customer;
-import ispirer.study.project.model.Order;
-import ispirer.study.project.model.State;
-import ispirer.study.project.model.Stock;
+import com.google.common.base.Strings;
+import ispirer.study.project.model.*;
 import ispirer.study.project.model.forms.Menu;
 import ispirer.study.project.service.CustomerService;
 import ispirer.study.project.service.OrderService;
@@ -34,8 +32,10 @@ public class MenuController {
             model.addAttribute("customers", Menu.isCustomers());
             model.addAttribute("customer", Menu.getCustomer());
             model.addAttribute("orders", Menu.isOrders());
-            model.addAttribute("stock", Menu.isStock());
             model.addAttribute("items", Menu.isItems());
+            model.addAttribute("stock", Menu.isStock());
+            model.addAttribute("stockId", Menu.getStockId());
+            model.addAttribute("stockManu", Menu.getStockManu());
             model.addAttribute("basket", Menu.isBasket());
             model.addAttribute("orderId", Menu.getOrderId());
             model.addAttribute("itemId", Menu.getItemId());
@@ -58,8 +58,10 @@ public class MenuController {
             model.addAttribute("customers", Menu.isCustomers());
             model.addAttribute("customer", Menu.getCustomer());
             model.addAttribute("orders", Menu.isOrders());
-            model.addAttribute("stock", Menu.isStock());
             model.addAttribute("items", Menu.isItems());
+            model.addAttribute("stock", Menu.isStock());
+            model.addAttribute("stockId", Menu.getStockId());
+            model.addAttribute("stockManu", Menu.getStockManu());
             model.addAttribute("basket", Menu.isBasket());
             model.addAttribute("orderId", Menu.getOrderId());
             model.addAttribute("itemId", Menu.getItemId());
@@ -77,7 +79,8 @@ public class MenuController {
 
 
     @GetMapping("/orders")
-    public String getOrders(Model model) {
+    public String getOrders(@RequestParam(value = "condition", defaultValue = " ") String condition,
+                            Model model) {
         try {
             if (!Menu.isOrders()) {
                 Menu.setOrders(true);
@@ -87,14 +90,24 @@ public class MenuController {
             model.addAttribute("customers", Menu.isCustomers());
             model.addAttribute("customer", Menu.getCustomer());
             model.addAttribute("orders", Menu.isOrders());
-            model.addAttribute("stock", Menu.isStock());
             model.addAttribute("items", Menu.isItems());
+            model.addAttribute("stock", Menu.isStock());
+            model.addAttribute("stockId", Menu.getStockId());
+            model.addAttribute("stockManu", Menu.getStockManu());
             model.addAttribute("basket", Menu.isBasket());
             model.addAttribute("orderId", Menu.getOrderId());
             model.addAttribute("itemId", Menu.getItemId());
-            List<Order> orders = orderService.getAll();
-            System.out.println("Number of orders: " + orders.size());
-            model.addAttribute("ordersList", orders);
+            if( condition.equals(" ")) {
+                List<Order> orders = orderService.orders();
+                System.out.println("Number of orders: " + orders.size());
+                model.addAttribute("ordersList", orders);
+            }
+            else {
+                Integer customerNum = Integer.valueOf(condition);
+                List<Order> orders = orderService.ordersByCustomer(customerNum);
+                System.out.println("Number of orders: " + orders.size());
+                model.addAttribute("ordersList", orders);
+            }
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -102,8 +115,9 @@ public class MenuController {
     }
 
 
-    @GetMapping("/stock")
+    @GetMapping("/stocks")
     public String getStock(Model model) {
+
         try {
             if (!Menu.isStock()) {
                 Menu.setStock(true);
@@ -115,12 +129,44 @@ public class MenuController {
             model.addAttribute("orders", Menu.isOrders());
             model.addAttribute("items", Menu.isItems());
             model.addAttribute("stock", Menu.isStock());
+            model.addAttribute("stockId", Menu.getStockId());
+            model.addAttribute("stockManu", Menu.getStockManu());
             model.addAttribute("basket", Menu.isBasket());
             model.addAttribute("orderId", Menu.getOrderId());
             model.addAttribute("itemId", Menu.getItemId());
             List<Stock> stocks = stockService.findAll();
+
             System.out.println("Number of stock: " + stocks.size());
             model.addAttribute("stockList", stocks);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return "stocks";
+    }
+
+    @GetMapping("/stock")
+    public String getStockId(Model model) {
+
+        try {
+            if (!Menu.isStock()) {
+                Menu.setStock(true);
+            }
+
+            model.addAttribute("wMain", Menu.isWMain());
+            model.addAttribute("customers", Menu.isCustomers());
+            model.addAttribute("customer", Menu.getCustomer());
+            model.addAttribute("orders", Menu.isOrders());
+            model.addAttribute("items", Menu.isItems());
+            model.addAttribute("stock", Menu.isStock());
+            model.addAttribute("stockId", Menu.getStockId());
+            model.addAttribute("stockManu", Menu.getStockManu());
+            model.addAttribute("basket", Menu.isBasket());
+            model.addAttribute("orderId", Menu.getOrderId());
+            model.addAttribute("itemId", Menu.getItemId());
+            Stock stock = stockService.selectStock(Menu.getStockId(),Menu.getStockManu());
+
+            model.addAttribute("stockId", stock);
 
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -141,9 +187,14 @@ public class MenuController {
             model.addAttribute("orders", Menu.isOrders());
             model.addAttribute("items", Menu.isItems());
             model.addAttribute("stock", Menu.isStock());
+            model.addAttribute("stockId", Menu.getStockId());
+            model.addAttribute("stockManu", Menu.getStockManu());
             model.addAttribute("basket", Menu.isBasket());
             model.addAttribute("orderId", Menu.getOrderId());
             model.addAttribute("itemId", Menu.getItemId());
+
+
+            model.addAttribute("basket", Basket.getBasket());
 
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -156,9 +207,6 @@ public class MenuController {
 
         Customer customer = new Customer();
         try {
-            if (!Menu.isBasket()) {
-                Menu.setBasket(true);
-            }
 
             model.addAttribute("wMain", Menu.isWMain());
             model.addAttribute("customers", Menu.isCustomers());
@@ -166,6 +214,8 @@ public class MenuController {
             model.addAttribute("orders", Menu.isOrders());
             model.addAttribute("items", Menu.isItems());
             model.addAttribute("stock", Menu.isStock());
+            model.addAttribute("stockId", Menu.getStockId());
+            model.addAttribute("stockManu", Menu.getStockManu());
             model.addAttribute("basket", Menu.isBasket());
             model.addAttribute("orderId", Menu.getOrderId());
             model.addAttribute("itemId", Menu.getItemId());
@@ -196,5 +246,89 @@ public class MenuController {
             exception.printStackTrace();
         }
         return "customer";
+    }
+
+    @GetMapping("/order")
+    public String getOrder(Model model) {
+
+        Order order = new Order();
+        try {
+
+            model.addAttribute("wMain", Menu.isWMain());
+            model.addAttribute("customers", Menu.isCustomers());
+            model.addAttribute("customer", Menu.getCustomer());
+            model.addAttribute("orders", Menu.isOrders());
+            model.addAttribute("items", Menu.isItems());
+            model.addAttribute("stock", Menu.isStock());
+            model.addAttribute("basket", Menu.isBasket());
+            model.addAttribute("orderId", Menu.getOrderId());
+            model.addAttribute("itemId", Menu.getItemId());
+
+
+            order = MenuController.orderService.showOrder(Menu.getOrderId());
+            Integer count_item = MenuController.orderService.countItems(Menu.getOrderId());
+
+            //SelectOrder
+            model.addAttribute("order_num", order.getOrderNum());
+            model.addAttribute("order_date", order.getOrderDate());
+            model.addAttribute("customer_num", order.getCustomerNum());
+            model.addAttribute("ship_instruct", order.getShipInstruct());
+            model.addAttribute("backlog", order.getBacklog());
+            model.addAttribute("po_num", order.getPoNum());
+            model.addAttribute("ship_date", order.getShipDate());
+            model.addAttribute("ship_weight", order.getShipWeight());
+            model.addAttribute("ship_charge", order.getShipCharge());
+            model.addAttribute("paid_date", order.getPaidDate());
+            model.addAttribute("count_item", count_item);
+
+            List<State> states = stateService.initStates();
+            model.addAttribute("states",states);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return "order";
+    }
+
+    @GetMapping("/items")
+    public String getItems(Model model) {
+        try {
+            model.addAttribute("wMain", Menu.isWMain());
+            model.addAttribute("customers", Menu.isCustomers());
+            model.addAttribute("customer", Menu.getCustomer());
+            model.addAttribute("orders", Menu.isOrders());
+            model.addAttribute("stock", Menu.isStock());
+            model.addAttribute("items", Menu.isItems());
+            model.addAttribute("basket", Menu.isBasket());
+            model.addAttribute("orderId", Menu.getOrderId());
+            model.addAttribute("itemId", Menu.getItemId());
+        }
+        catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return "items";
+    }
+
+    @GetMapping("/item")
+    public String getItem(Model model) {
+        try {
+            model.addAttribute("wMain", Menu.isWMain());
+            model.addAttribute("customers", Menu.isCustomers());
+            model.addAttribute("customer", Menu.getCustomer());
+            model.addAttribute("orders", Menu.isOrders());
+            model.addAttribute("stock", Menu.isStock());
+            model.addAttribute("items", Menu.isItems());
+            model.addAttribute("basket", Menu.isBasket());
+            model.addAttribute("orderId", Menu.getOrderId());
+            model.addAttribute("itemId", Menu.getItemId());
+
+            //selectedItem
+
+
+        }
+        catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return "items";
     }
 }

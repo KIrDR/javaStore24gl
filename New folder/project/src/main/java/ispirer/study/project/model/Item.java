@@ -6,6 +6,7 @@ public class Item {
     private int orderNum;
     private short stockNum;
     private String manuCode;
+    private String description;
     private short quantity;
     private double totalPrice;
 
@@ -67,5 +68,22 @@ public class Item {
                 ", quantity=" + quantity +
                 ", totalPrice=" + totalPrice +
                 '}';
+    }
+
+
+    public Item(Stock stock) {
+        this.stockNum = stock.getStockNum();
+        this.manuCode = stock.getManuCode();
+        this.quantity = 1 ;
+        this.totalPrice = stock.getUnitPrice() ;
+        this.description = stock.getDescription();
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

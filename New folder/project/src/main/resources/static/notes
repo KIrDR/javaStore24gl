@@ -1,0 +1,44 @@
+
+ MENU
+            model.addAttribute("wMain", Menu.isWMain());
+            model.addAttribute("customers", Menu.isCustomers());
+            model.addAttribute("customer", Menu.getCustomer());
+            model.addAttribute("orders", Menu.isOrders());
+            model.addAttribute("items", Menu.isItems());
+            model.addAttribute("stock", Menu.isStock());
+            model.addAttribute("stockId", Menu.getStockId());
+            model.addAttribute("stockManu", Menu.getStockManu());
+            model.addAttribute("basket", Menu.isBasket());
+            model.addAttribute("orderId", Menu.getOrderId());
+            model.addAttribute("itemId", Menu.getItemId());
+
+
+
+
+ MENU-html
+
+<div class="dropdown">
+    <button class="menu-btn">Menu</button>
+    <div class="dropdown-content">
+        <ul>
+            <li th:if="${wMain}"><a href="/wMain">wMain</a></li>
+            <li th:if="${customers}"><a href="/customers">Customers</a></li>
+            <li th:if="${customer != null}">
+                <a th:href="@{/customer}" th:text="'Customer ' + ${customer}">Customer</a>
+            </li>
+            <li th:if="${orders}"><a href="/orders">Orders</a></li>
+            <li th:if="${items}"><a href="/items">Items</a></li>
+            <li th:if="${stock}"><a href="/stocks">Stock</a></li>
+            <li th:if="${stockId}">
+                <a href="/stock"  th:text="'Stock ' + ${stockId} + ${stockManu}">Stock</a>
+            </li>
+            <li th:if="${basket}"><a href="/basket">Basket</a></li>
+            <li th:if="${orderId != null}">
+                <a th:href="@{/order}" th:text="'Order ' + ${orderId}">Order</a>
+            </li>
+            <li th:if="${itemId != null}">
+                <a href="/itemId" th:text="'Item ' + ${itemId}">Item ID</a>
+            </li>
+        </ul>
+    </div>
+</div>

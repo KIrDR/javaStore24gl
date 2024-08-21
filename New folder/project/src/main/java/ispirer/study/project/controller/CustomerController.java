@@ -15,8 +15,6 @@ import java.util.Map;
 @Controller
 public class CustomerController {
 
-
-
     @PutMapping("/updateCustomerNumber")
     public ResponseEntity<String> updateCustomerNumber(@RequestBody Integer customerNumber) {
         if (customerNumber != null) {

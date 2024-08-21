@@ -8,6 +8,7 @@
 <body>
 <h1>Welcome to the Main Menu</h1>
 
+
 <div class="dropdown">
     <button class="menu-btn">Menu</button>
     <div class="dropdown-content">
@@ -19,10 +20,17 @@
             </li>
             <li th:if="${orders}"><a href="/orders">Orders</a></li>
             <li th:if="${items}"><a href="/items">Items</a></li>
-            <li th:if="${stock}"><a href="/stock">Stock</a></li>
+            <li th:if="${stock}"><a href="/stocks">Stock</a></li>
+            <li th:if="${stockId}">
+                <a href="/stock"  th:text="'Stock ' + ${stockId} + ${stockManu}">Stock</a>
+            </li>
             <li th:if="${basket}"><a href="/basket">Basket</a></li>
-            <li th:if="${orderId != null}"><a href="/orderId">Order ID</a></li>
-            <li th:if="${itemId != null}"><a href="/itemId">Item ID</a></li>
+            <li th:if="${orderId != null}">
+                <a th:href="@{/order}" th:text="'Order ' + ${orderId}">Order</a>
+            </li>
+            <li th:if="${itemId != null}">
+                <a href="/itemId" th:text="'Item ' + ${itemId}">Item ID</a>
+            </li>
         </ul>
     </div>
 </div>
@@ -37,7 +45,7 @@
         <img src="/images/orders.png" alt="Orders" width="40" height="40"/>
         Orders
     </a>
-    <a href="/stock" class="button">
+    <a href="/stocks" class="button">
         <img src="/images/stock.png" alt="Stock" width="40" height="40"/>
         Stock
     </a>
