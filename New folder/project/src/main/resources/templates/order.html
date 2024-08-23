@@ -9,7 +9,6 @@
 </head>
 <body>
 
-
 <div class="dropdown">
     <button class="menu-btn">Menu</button>
     <div class="dropdown-content">
@@ -30,11 +29,12 @@
                 <a th:href="@{/order}" th:text="'Order ' + ${orderId}">Order</a>
             </li>
             <li th:if="${itemId != null}">
-                <a href="/itemId" th:text="'Item ' + ${itemId}">Item ID</a>
+                <a href="/item" th:text="Item ">Item ID</a>
             </li>
         </ul>
     </div>
 </div>
+
 <form>
     <h2>Order Details</h2>
 
@@ -75,7 +75,8 @@
     </div>
     <div class="group">
         <h3>Order Items</h3>
-           <button type="button" id="items" th:text="|Show items: ${count_item}|">Show items</button>
+        <button type="button" id="items" th:text="|Show items: ${count_item}|" onclick="window.location.href='items'">Show Items</button>
+
     </div>
 
 </form>

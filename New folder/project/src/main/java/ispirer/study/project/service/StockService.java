@@ -18,6 +18,9 @@ public class StockService {
         return stockRepository.selectStock(stockId, manuCode);
     }
 
+    public double getUnitPrice(Integer stockNum,String manuCode){
+        return  selectStock(stockNum, manuCode).getUnitPrice();
+    }
     public List<Stock> findAll() {
         return stockRepository.findAll();
     }

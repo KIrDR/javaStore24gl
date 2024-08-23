@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Item Details</title>
+    <link rel="stylesheet" href="/css/menu.css">
+    <link rel="stylesheet" href="/css/order.css">
+</head>
+<body>
+<div class="dropdown">
+    <button class="menu-btn">Menu</button>
+    <div class="dropdown-content">
+        <ul>
+            <li th:if="${wMain}"><a href="/wMain">wMain</a></li>
+            <li th:if="${customers}"><a href="/customers">Customers</a></li>
+            <li th:if="${customer != null}">
+                <a th:href="@{/customer}" th:text="'Customer ' + ${customer}">Customer</a>
+            </li>
+            <li th:if="${orders}"><a href="/orders">Orders</a></li>
+            <li th:if="${items}"><a href="/items">Items</a></li>
+            <li th:if="${stock}"><a href="/stocks">Stock</a></li>
+            <li th:if="${stockId}">
+                <a href="/stock"  th:text="'Stock ' + ${stockId} + ${stockManu}">Stock</a>
+            </li>
+            <li th:if="${basket}"><a href="/basket">Basket</a></li>
+            <li th:if="${orderId != null}">
+                <a th:href="@{/order}" th:text="'Order ' + ${orderId}">Order</a>
+            </li>
+            <li th:if="${itemId != null}">
+                <a href="/item" th:text="'Item ' + ${itemId}">Item</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<form th:object="${item}">
+
+        <div class="form-group">
+            <label for="item_num">Item No.:</label>
+            <input type="text" id="item_num" th:value="${item.itemNum}" readonly>
+        </div>
+            <div class="form-group">
+                <label for="order_num">Order No.:</label>
+                <input type="text" id="order_num" th:value="${item.orderNum}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="stock_num">Stock No.:</label>
+                <input type="text" id="stock_num" th:value="${item.stockNum}" readonly>
+                <button type="button" onclick="showStock()">Show Stock</button>
+            </div>
+
+            <div class="form-group">
+                <label for="manu_code">Manu Code:</label>
+                <input type="text" id="manu_code" th:value="${item.manuCode}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <input type="text" id="description" th:value="${item.description}" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="quantity"
+                       th:disabled="${flag != null ? 'true' : 'false'}"
+                       th:value="${item.quantity}" min="0" max="999" th:onchange="this.dispatchEvent(new Event('change'))">
+            </div>
+
+            <div class="form-group">
+                <label for="unit_price">Unit Price:</label>
+                <input type="text" id="unit_price" th:value="${unitPrice}" readonly>
+            </div>
+            <div class="form-group">
+                <label for="total_price">Total:</label>
+                <input type="text" id="total_price" th:value="${item.totalPrice}" readonly>
+            </div>
+        </form>
+
+        <script th:inline="javascript">
+            document.getElementById("quantity").addEventListener("change", function() {
+                var quantity = this.value;
+                var index = [[${itemId}]];
+
+                fetch('/updateQuantity', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `index=${index}&quantity=${quantity}`
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        console.error('Ошибка при обновлении количества');
+                    }
+                });
+            });
+
+            function showStock() {
+            const url = '/stocks';
+            window.location.href = url;
+            }
+        </script>
+
+<!--
+ -->
+</body>
+</html>

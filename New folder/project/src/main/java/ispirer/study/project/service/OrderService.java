@@ -1,6 +1,8 @@
 package ispirer.study.project.service;
 
+import ispirer.study.project.controller.MenuController;
 import ispirer.study.project.model.Customer;
+import ispirer.study.project.model.Item;
 import ispirer.study.project.model.Order;
 import ispirer.study.project.repository.CustomerRepository;
 import ispirer.study.project.repository.OrderRepository;
@@ -24,5 +26,10 @@ public class OrderService {
     public Integer countItems(Integer orderNum) {
         return orderRepository.countItems(orderNum);
     }
+
+    public List<Item> fetchItems(Integer orederNum){
+        return MenuController.itemService.getOrderItems(orederNum);
+    }
+
 
 }

@@ -70,6 +70,9 @@ public class Item {
                 '}';
     }
 
+    public Item(){
+
+    }
 
     public Item(Stock stock) {
         this.stockNum = stock.getStockNum();

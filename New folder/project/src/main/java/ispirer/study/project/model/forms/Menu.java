@@ -10,7 +10,7 @@ public class Menu {
     private static boolean items = false;
     private static boolean basket = false;
     private static Integer orderId = null;
-    private static Integer itemId = null;
+    private static Integer item = null;
 
     public Menu() {
     }
@@ -75,11 +75,11 @@ public class Menu {
     }
 
     public static Integer getItemId() {
-        return itemId;
+        return item;
     }
 
     public static void setItemId(Integer itemId) {
-        Menu.itemId = itemId;
+        Menu.item = itemId;
     }
 
     public static Integer getStockId() {

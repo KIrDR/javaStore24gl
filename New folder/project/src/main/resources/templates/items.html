@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Items Page</title>
     <link rel="stylesheet" href="/css/menu.css">
     <link rel="stylesheet" href="/css/items.css">
 </head>
 <body>
+<h1>Items Page</h1>
 
 <div class="dropdown">
     <button class="menu-btn">Menu</button>
@@ -21,33 +21,97 @@
             <li th:if="${items}"><a href="/items">Items</a></li>
             <li th:if="${stock}"><a href="/stocks">Stock</a></li>
             <li th:if="${stockId}">
-                <a href="/stock"  th:text="'Stock ' + ${stockId} + ${stockManu}">Stock</a>
+                <a href="/stock" th:text="'Stock ' + ${stockId} + ${stockManu}">Stock</a>
             </li>
             <li th:if="${basket}"><a href="/basket">Basket</a></li>
             <li th:if="${orderId != null}">
                 <a th:href="@{/order}" th:text="'Order ' + ${orderId}">Order</a>
             </li>
             <li th:if="${itemId != null}">
-                <a href="/itemId" th:text="'Item ' + ${itemId}">Item ID</a>
+                <a th:href="@{/itemId}" th:text="'Item ' + ${itemId}">Item ID</a>
             </li>
         </ul>
     </div>
 </div>
-<div id="table3">
-    <table>
-        <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Detail</th>
-        </tr>
-        <tr>
-            <td><img src="/images/1.png" alt="Image"></td>
-            <td>Text</td>
-            <td>Detail Text</td>
-        </tr>
-    </table>
-</div>
 
+<h2>Basket Items</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Image</th>
+        <th>Text</th>
+        <th>Detail Text</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item, iterStat : ${items}" th:ondblclick="handleRowDoubleClick([[${item.orderNum}]], [[${item.stockNum}]], [[${item.manuCode}]])">
+        <td>
+            <img src="" alt="Stock Image" th:id="'image-' + ${iterStat.index}">
+        </td>
+        <td th:text="${item.description}"></td>
+        <td th:text="${item.totalPrice}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Total</h3>
+<p th:text="${total}"></p>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener("DOMContentLoaded", function() {
+        var items = [[${items}]];
+
+        items.forEach(function(item, index) {
+            var stockNum = item.stockNum;
+            var imgElement = document.getElementById('image-' + index);
+
+            if (imgElement) {
+                var imageUrl = '/images/' + stockNum + '.png';
+
+                loadImage(imageUrl)
+                    .then(function(src) {
+                        imgElement.src = src;
+                    })
+                    .catch(function() {
+                        imgElement.src = '/images/noarticle.png?t=' + new Date().getTime();
+                    });
+            } else {
+                console.error('Element with id image-' + index + ' not found.');
+            }
+        });
+    });
+
+    function handleRowDoubleClick(orderNum, stockNum, manuCode) {
+        const url = new URL('/item', window.location.origin);
+        url.searchParams.append('order_num', orderNum);
+        url.searchParams.append('stock_num', stockNum);
+        url.searchParams.append('manu_code', manuCode);
+
+        fetch(url)
+            .then(response => response.text())
+            .then(result => {
+                // Optionally, handle the result or redirect
+                console.log('Success:', result);
+                // Example: Redirect to the item page
+                window.location.href = url;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to fetch item.');
+            });
+    }
+
+    function loadImage(src) {
+        return new Promise(function(resolve, reject) {
+            var img = new Image();
+            img.onload = function() { resolve(src); };
+            img.onerror = function() { reject(src); };
+            img.src = src + '?t=' + new Date().getTime();
+        });
+    }
+    /*]]>*/
+</script>
 
 </body>
 </html>

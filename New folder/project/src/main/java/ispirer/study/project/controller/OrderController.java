@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -25,4 +26,14 @@ public class OrderController {
         }
         return ResponseEntity.ok("Order number updated successfully");
     }
+
+//    @PutMapping("/itemSelect")
+//    public ResponseEntity<String> itemSelect(
+//            @RequestParam("order_num") Integer orderNum,
+//            @RequestParam("stock_num") Integer stockNum,
+//            @RequestParam("manu_code") Integer manuCode) {
+//
+//            MenuController
+//
+//    }
 }

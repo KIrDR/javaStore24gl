@@ -8,7 +8,6 @@
 <body>
 <h1>Customer List</h1>
 
-
 <div class="dropdown">
     <button class="menu-btn">Menu</button>
     <div class="dropdown-content">
@@ -29,11 +28,12 @@
                 <a th:href="@{/order}" th:text="'Order ' + ${orderId}">Order</a>
             </li>
             <li th:if="${itemId != null}">
-                <a href="/itemId" th:text="'Item ' + ${itemId}">Item ID</a>
+                <a href="/item" th:text="Item ">Item ID</a>
             </li>
         </ul>
     </div>
 </div>
+
 
 <div class="container">
     <table border="1">

@@ -18,4 +18,13 @@ public class Basket {
     public static void setBasket(List<Item> basket) {
         Basket.basket = basket;
     }
+
+    @Override
+    public String toString() {
+        String string = "";
+        for(Item i : basket)
+            string += i.getStockNum();
+
+        return string;
+    }
 }
